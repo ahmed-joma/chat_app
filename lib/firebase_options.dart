@@ -28,10 +28,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -58,6 +55,18 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyCkZl-6g07e7aYm06Ub1ttmSHyx3ieT-y0',
+    appId: '1:843829452624:ios:cbb795b7a80fac4b7e5655',
+    messagingSenderId: '843829452624',
+    projectId: 'chat-app-9a13c',
+    storageBucket: 'chat-app-9a13c.firebasestorage.app',
+    iosBundleId: 'com.example.chatApp',
+  );
+
+  // يشترك macOS مع تطبيق iOS في Firebase لأنّ مُعرّف الحزمة واحد
+  // (com.example.chatApp). إن سجّلت تطبيق macOS منفصلاً لاحقاً، أعد التوليد
+  // عبر `flutterfire configure`.
+  static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCkZl-6g07e7aYm06Ub1ttmSHyx3ieT-y0',
     appId: '1:843829452624:ios:cbb795b7a80fac4b7e5655',
     messagingSenderId: '843829452624',
