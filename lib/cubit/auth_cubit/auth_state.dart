@@ -1,28 +1,36 @@
 part of 'auth_cubit.dart';
 
 @immutable
-abstract class AuthState {}
-
-class AuthInitial extends AuthState {}
-
-class LoginLoadingState extends AuthState {}
-
-class LoginSuccessState extends AuthState {}
-
-// ignore: must_be_immutable
-class LoginFailureState extends AuthState {
-  String errMessage;
-  LoginFailureState({required this.errMessage});
+sealed class AuthState {
+  const AuthState();
 }
 
-//----------
+class AuthInitial extends AuthState {
+  const AuthInitial();
+}
 
-class RegisterLoadingState extends AuthState {}
+class LoginLoadingState extends AuthState {
+  const LoginLoadingState();
+}
 
-class RegisterSuccessState extends AuthState {}
+class LoginSuccessState extends AuthState {
+  const LoginSuccessState();
+}
 
-// ignore: must_be_immutable
+class LoginFailureState extends AuthState {
+  final String errMessage;
+  const LoginFailureState({required this.errMessage});
+}
+
+class RegisterLoadingState extends AuthState {
+  const RegisterLoadingState();
+}
+
+class RegisterSuccessState extends AuthState {
+  const RegisterSuccessState();
+}
+
 class RegisterFailureState extends AuthState {
-  String errMessages;
-  RegisterFailureState({required this.errMessages});
+  final String errMessages;
+  const RegisterFailureState({required this.errMessages});
 }

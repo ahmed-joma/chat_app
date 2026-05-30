@@ -57,15 +57,6 @@ class chatPage extends StatelessWidget {
                     ); // استخدمت WidgetsBinding.instance.addPostFrameCallback حتى أضمن أن السكروول يتم بعد اكتمال بناء الرسائل على الشاشة،
 // لأن تحريك السكروول مباشرة قد لا يظهر آخر رسالة بشكل كامل إذا لم يكن قد تم حساب الطول الجديد للـ ListView بعد.
                   });
-                } else if (state is ChatFailure) {
-                  messageList.add(state.failedMessage);
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _controller.animateTo(
-                      _controller.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeIn,
-                    );
-                  });
                 }
               },
               builder: (context, state) {

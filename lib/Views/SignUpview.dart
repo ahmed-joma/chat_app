@@ -100,7 +100,7 @@ class Signupview extends StatelessWidget {
                       onTap: () async {
                         if (formKey.currentState!.validate()) {
                           BlocProvider.of<AuthCubit>(context)
-                              .signUpUser(email!, password!);
+                              .signUpUser(email: email!, password: password!);
                         }
                       },
                       nameButton: 'Sign Up',

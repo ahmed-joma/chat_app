@@ -1,49 +1,78 @@
-import 'package:bloc/bloc.dart';
+import 'dart:async';
+
 import 'package:chat_app/constants.dart';
 import 'package:chat_app/models/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
   ChatCubit() : super(ChatInitial());
-  CollectionReference messages =
+
+  final CollectionReference<Map<String, dynamic>> _messages =
       FirebaseFirestore.instance.collection(KMessagesCollection);
 
-  void sendMessage({required String message, required String email}) async {
-    List<Message> currentMessages = [];
-    if (state is ChatSuccess) {
-      currentMessages = List<Message>.from((state as ChatSuccess).messageList);
-    } else if (state is ChatLoading) {
-      currentMessages = List<Message>.from((state as ChatLoading).messageList);
-    }
-    final tempMsg = Message(message, email, isLoading: true);
-    currentMessages.add(tempMsg);
-    emit(ChatLoading(messageList: currentMessages));
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _subscription;
+
+  /// يفتح بثاً واحداً فقط لرسائل Firestore مرتبة حسب وقت الإنشاء.
+  void getMessages() {
+    // نتجنب فتح أكثر من اشتراك إذا استُدعيت الدالة مرة أخرى.
+    if (_subscription != null) return;
+
+    _subscription = _messages
+        .orderBy(KCreatedAt)
+        .snapshots()
+        .listen(
+      (snapshot) {
+        final messageList =
+            snapshot.docs.map(Message.fromJson).toList();
+        emit(ChatSuccess(messageList: messageList));
+      },
+      onError: (_) => emit(const ChatFailure()),
+    );
+  }
+
+  Future<void> sendMessage({
+    required String message,
+    required String email,
+  }) async {
+    final text = message.trim();
+    if (text.isEmpty) return;
+
+    final currentMessages = _currentMessages();
+    final tempMsg = Message(text, email, isLoading: true);
+    // الإرسال التفاؤلي: نعرض الرسالة فوراً ثم يصحّحها البث القادم من السيرفر.
+    emit(ChatSuccess(messageList: [...currentMessages, tempMsg]));
 
     try {
-      await messages.add({
-        KMessages: message,
-        KCreatedAt: DateTime.now(),
+      await _messages.add({
+        KMessages: text,
+        KCreatedAt: FieldValue.serverTimestamp(),
         KEmail: email,
       });
-      // عند النجاح، getMessages سيجلب الرسائل من السيرفر وتختفي علامة الساعة تلقائياً
-    } catch (e) {
-      // عند الفشل، غيّر الرسالة الأخيرة إلى isFailed
-      currentMessages.remove(tempMsg);
-      currentMessages.add(Message(message, email, isFailed: true));
-      emit(ChatSuccess(messageList: currentMessages));
+    } catch (_) {
+      // عند الفشل نستبدل الرسالة المؤقتة بأخرى عليها علامة خطأ.
+      final reconciled = [
+        ...currentMessages,
+        Message(text, email, isFailed: true),
+      ];
+      emit(ChatSuccess(messageList: reconciled));
     }
   }
 
-  void getMessages() {
-    messages.orderBy(KCreatedAt).snapshots().listen((event) {
-      List<Message> messageList = [];
-      for (var doc in event.docs) {
-        messageList.add(Message.fromJson(doc));
-      }
-      emit(ChatSuccess(messageList: messageList));
-    });
+  List<Message> _currentMessages() {
+    final current = state;
+    if (current is ChatSuccess) {
+      return List<Message>.from(current.messageList);
+    }
+    return <Message>[];
+  }
+
+  @override
+  Future<void> close() {
+    _subscription?.cancel();
+    return super.close();
   }
 }
