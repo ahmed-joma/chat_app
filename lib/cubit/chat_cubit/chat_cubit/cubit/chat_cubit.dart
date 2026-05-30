@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
-  ChatCubit() : super(ChatInitial());
+  ChatCubit() : super(const ChatInitial());
 
   final CollectionReference<Map<String, dynamic>> _messages =
       FirebaseFirestore.instance.collection(kMessagesCollection);
@@ -21,8 +21,10 @@ class ChatCubit extends Cubit<ChatState> {
     // نتجنب فتح أكثر من اشتراك إذا استُدعيت الدالة مرة أخرى.
     if (_subscription != null) return;
 
+    // ترتيب تنازلي ليُعرض في قائمة معكوسة (reverse: true): الأحدث في الأسفل
+    // بدون الحاجة لتحريك السكروول يدوياً.
     _subscription = _messages
-        .orderBy(kCreatedAtField)
+        .orderBy(kCreatedAtField, descending: true)
         .snapshots()
         .listen(
       (snapshot) {
@@ -44,7 +46,7 @@ class ChatCubit extends Cubit<ChatState> {
     final currentMessages = _currentMessages();
     final tempMsg = Message(text, email, isLoading: true);
     // الإرسال التفاؤلي: نعرض الرسالة فوراً ثم يصحّحها البث القادم من السيرفر.
-    emit(ChatSuccess(messageList: [...currentMessages, tempMsg]));
+    emit(ChatSuccess(messageList: [tempMsg, ...currentMessages]));
 
     try {
       await _messages.add({
@@ -55,8 +57,8 @@ class ChatCubit extends Cubit<ChatState> {
     } catch (_) {
       // عند الفشل نستبدل الرسالة المؤقتة بأخرى عليها علامة خطأ.
       final reconciled = [
-        ...currentMessages,
         Message(text, email, isFailed: true),
+        ...currentMessages,
       ];
       emit(ChatSuccess(messageList: reconciled));
     }

@@ -4,23 +4,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(AuthInitial());
+  AuthCubit() : super(const AuthInitial());
 
   Future<void> logInUser({
     required String email,
     required String password,
   }) async {
-    emit(LoginLoadingState());
+    emit(const LoginLoadingState());
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email.trim(),
         password: password,
       );
-      emit(LoginSuccessState());
+      emit(const LoginSuccessState());
     } on FirebaseAuthException catch (e) {
       emit(LoginFailureState(errMessage: _loginErrorMessage(e.code)));
     } catch (_) {
-      emit(LoginFailureState(errMessage: 'Something went wrong.'));
+      emit(const LoginFailureState(errMessage: 'Something went wrong.'));
     }
   }
 
@@ -28,17 +28,17 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String password,
   }) async {
-    emit(RegisterLoadingState());
+    emit(const RegisterLoadingState());
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email.trim(),
         password: password,
       );
-      emit(RegisterSuccessState());
+      emit(const RegisterSuccessState());
     } on FirebaseAuthException catch (e) {
       emit(RegisterFailureState(errMessages: _registerErrorMessage(e.code)));
     } catch (_) {
-      emit(RegisterFailureState(errMessages: 'Something went wrong.'));
+      emit(const RegisterFailureState(errMessages: 'Something went wrong.'));
     }
   }
 
