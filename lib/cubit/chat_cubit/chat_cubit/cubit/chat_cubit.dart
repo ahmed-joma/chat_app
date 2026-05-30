@@ -12,7 +12,7 @@ class ChatCubit extends Cubit<ChatState> {
   ChatCubit() : super(ChatInitial());
 
   final CollectionReference<Map<String, dynamic>> _messages =
-      FirebaseFirestore.instance.collection(KMessagesCollection);
+      FirebaseFirestore.instance.collection(kMessagesCollection);
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _subscription;
 
@@ -22,7 +22,7 @@ class ChatCubit extends Cubit<ChatState> {
     if (_subscription != null) return;
 
     _subscription = _messages
-        .orderBy(KCreatedAt)
+        .orderBy(kCreatedAtField)
         .snapshots()
         .listen(
       (snapshot) {
@@ -48,9 +48,9 @@ class ChatCubit extends Cubit<ChatState> {
 
     try {
       await _messages.add({
-        KMessages: text,
-        KCreatedAt: FieldValue.serverTimestamp(),
-        KEmail: email,
+        kMessageField: text,
+        kCreatedAtField: FieldValue.serverTimestamp(),
+        kSenderField: email,
       });
     } catch (_) {
       // عند الفشل نستبدل الرسالة المؤقتة بأخرى عليها علامة خطأ.

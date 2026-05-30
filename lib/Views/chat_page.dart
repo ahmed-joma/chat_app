@@ -23,7 +23,7 @@ class chatPage extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading:
             false, // عشان احذف السهم الي برجعني بوب لصفحه الي ورا
-        backgroundColor: KPrimaryColor,
+        backgroundColor: kPrimaryColor,
         title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Image.asset(
             'assets/images/scholar.png',
@@ -70,7 +70,7 @@ class chatPage extends StatelessWidget {
                         itemCount:
                             messageList.length, //هنا بدي اعرض الرسائل ع الشاشه
                         itemBuilder: (context, index) {
-                          return messageList[index].kEmail == email
+                          return messageList[index].senderEmail == email
                               ? ChatBuble(
                                   message: messageList[index],
                                   //من خلال المسج هين اعيطيتوا المسج الي جاي الي
@@ -104,13 +104,13 @@ class chatPage extends StatelessWidget {
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
-                  borderSide: const BorderSide(color: KPrimaryColor),
+                  borderSide: const BorderSide(color: kPrimaryColor),
                 ),
                 hintText: 'type a message...',
                 suffixIcon: IconButton(
                     icon: const Icon(
                       Icons.send,
-                      color: KPrimaryColor,
+                      color: kPrimaryColor,
                     ),
                     onPressed: () {
                       BlocProvider.of<ChatCubit>(context).sendMessage(

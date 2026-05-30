@@ -33,7 +33,7 @@ class Signupview extends StatelessWidget {
           //هذه الدالة عشان اعمل لودنج اثناء التسجيل ووضعتها فوق لسكافولد عشان بدي الصفحه كلها تتغير
           inAsyncCall: isLoading,
           child: Scaffold(
-            backgroundColor: KPrimaryColor,
+            backgroundColor: kPrimaryColor,
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Form(

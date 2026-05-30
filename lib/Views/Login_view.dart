@@ -36,7 +36,7 @@ class loginView extends StatelessWidget {
       child: ModalProgressHUD(
         inAsyncCall: isLoading,
         child: Scaffold(
-          backgroundColor: KPrimaryColor,
+          backgroundColor: kPrimaryColor,
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Form(

@@ -32,7 +32,7 @@ class ChatBuble extends StatelessWidget {
             ),
             //المارج بيياخدي مسافه خارج الكونتينر
             decoration: const BoxDecoration(
-              color: KPrimaryColor,
+              color: kPrimaryColor,
               borderRadius: BorderRadius.only(
                 // عشان اعمل الزوايه
                 topLeft: Radius.circular(30),

@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 
-const KPrimaryColor = Color(0xff2B475E);
-const KMessagesCollection = 'messages';
-const KMessages = 'message';
-const KCreatedAt = 'createdAt';
-const KEmail   = 'id';
+/// لون الهوية الأساسي للتطبيق.
+const kPrimaryColor = Color(0xff2B475E);
+
+/// اسم مجموعة الرسائل في Firestore.
+const kMessagesCollection = 'messages';
+
+/// مفاتيح حقول مستند الرسالة في Firestore.
+const kMessageField = 'message';
+const kCreatedAtField = 'createdAt';
+
+/// تاريخياً يُخزَّن بريد المرسِل في حقل اسمه 'id'؛ نُبقي القيمة كما هي
+/// للتوافق مع البيانات الموجودة مسبقاً.
+const kSenderField = 'id';
